@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-stream.swifftnet.site';
 
 export interface Channel {
   id: number;
@@ -68,6 +68,10 @@ export async function changePassword(
 export async function getChannels(): Promise<Channel[]> {
   const res = await fetch(`${API_URL}/api/channels`, {
     cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'LiveStream-Frontend',
+    },
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Failed to fetch channels');
