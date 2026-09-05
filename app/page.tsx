@@ -1,19 +1,34 @@
-import { getChannels } from '@/lib/api';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { getChannels, Channel } from '@/lib/api';
 import ChannelCard from '@/components/ChannelCard';
 import Navbar from '@/components/Navbar';
 import { Radio } from 'lucide-react';
 
-export const revalidate = 10; // Revalidate every 10 seconds
+export default function HomePage() {
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-export default async function HomePage() {
-  let channels: any[] = [];
-  let error = '';
+  const fetchChannels = async () => {
+    try {
+      const data = await getChannels();
+      setChannels(data);
+      setError('');
+    } catch (err) {
+      setError('Could not connect to the stream server. Make sure the local server is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  try {
-    channels = await getChannels();
-  } catch (err) {
-    error = 'Could not connect to the stream server. Make sure the local server is running.';
-  }
+  useEffect(() => {
+    fetchChannels();
+    // Mag-auto refresh bawat 10 segundo para ma-detect kung may nag-live
+    const interval = setInterval(fetchChannels, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const liveChannels = channels.filter((c) => c.isLive);
   const offlineChannels = channels.filter((c) => !c.isLive);
@@ -29,7 +44,7 @@ export default async function HomePage() {
             Live Channels
           </h1>
           <p className="text-white/40 mt-2">
-            {error ? '' : `${channels.length} channel${channels.length !== 1 ? 's' : ''} · ${liveChannels.length} live`}
+            {error || loading ? '' : `${channels.length} channel${channels.length !== 1 ? 's' : ''} · ${liveChannels.length} live`}
           </p>
         </div>
 
@@ -40,8 +55,13 @@ export default async function HomePage() {
           </div>
         )}
 
+        {/* Loading state */}
+        {loading && (
+          <div className="text-white/40 text-sm py-10">Loading channels...</div>
+        )}
+
         {/* Live channels */}
-        {liveChannels.length > 0 && (
+        {!loading && liveChannels.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-5">
               <span className="live-dot w-2 h-2 rounded-full bg-live inline-block" />
@@ -58,7 +78,7 @@ export default async function HomePage() {
         )}
 
         {/* Offline channels */}
-        {offlineChannels.length > 0 && (
+        {!loading && offlineChannels.length > 0 && (
           <section>
             {liveChannels.length > 0 && (
               <h2 className="text-sm font-semibold text-white/30 uppercase tracking-widest mb-5">
@@ -74,7 +94,7 @@ export default async function HomePage() {
         )}
 
         {/* Empty state */}
-        {channels.length === 0 && !error && (
+        {!loading && channels.length === 0 && !error && (
           <div className="text-center py-24">
             <Radio className="w-14 h-14 text-white/10 mx-auto mb-4" />
             <h2 className="text-white/30 text-lg font-medium">No channels yet</h2>
