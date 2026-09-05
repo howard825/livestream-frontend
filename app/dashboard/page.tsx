@@ -214,7 +214,7 @@ export default function DashboardPage() {
                       <p className="text-xs text-white/40 mb-1">OBS Server URL</p>
                       <div className="flex items-center gap-2">
                         <code className="flex-1 text-xs bg-white/5 border border-white/10 rounded px-3 py-2 text-green-400 font-mono">
-                          rtmp://localhost:1935/live
+                          rtmp://live.swifftnet.site:1935/live
                         </code>
                         <button
                           onClick={() => handleCopy('rtmp://localhost:1935/live')}
