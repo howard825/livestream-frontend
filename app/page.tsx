@@ -6,7 +6,7 @@ import { Radio } from 'lucide-react';
 export const revalidate = 10; // Revalidate every 10 seconds
 
 export default async function HomePage() {
-  let channels = [];
+  let channels: any[] = [];
   let error = '';
 
   try {
