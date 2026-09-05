@@ -8,6 +8,8 @@ import HLSPlayer from '@/components/HLSPlayer';
 import Link from 'next/link';
 import { Radio } from 'lucide-react';
 
+const HLS_URL = process.env.NEXT_PUBLIC_HLS_URL || 'https://hls-stream.swifftnet.site';
+
 export default function WatchPage() {
   const params = useParams();
   const slug = params?.slug as string;
@@ -32,7 +34,6 @@ export default function WatchPage() {
 
   useEffect(() => {
     fetchChannelData();
-    // Mag-auto refresh bawat 5 segundo para malaman kung nag-live o nag-offline
     const interval = setInterval(fetchChannelData, 5000);
     return () => clearInterval(interval);
   }, [slug]);
@@ -67,6 +68,9 @@ export default function WatchPage() {
     );
   }
 
+  // Ginawa nating src ang hls stream URL para tugma sa HLSPlayer
+  const streamSrc = `${HLS_URL}/hls/${channel.slug}/index.m3u8`;
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -75,7 +79,7 @@ export default function WatchPage() {
         <div className="mb-6">
           {/* HLS Video Player */}
           <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black/40 border border-white/10 relative">
-            <HLSPlayer channelSlug={channel.slug} isLive={channel.isLive} />
+            <HLSPlayer src={streamSrc} isLive={channel.isLive} />
           </div>
 
           {/* Channel Info */}
