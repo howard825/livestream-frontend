@@ -69,18 +69,29 @@ export async function getChannels(): Promise<Channel[]> {
   const res = await fetch(`${API_URL}/api/channels`, {
     cache: 'no-store',
     headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': 'LiveStream-Frontend',
+      'Accept': 'application/json',
     },
   });
+
+  if (!res.ok) {
+    throw new Error(`API returned HTTP status ${res.status}`);
+  }
+
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error('API returned HTML/Cloudflare challenge instead of JSON.');
+  }
+
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to fetch channels');
   return data;
 }
 
 export async function getChannel(slug: string): Promise<Channel> {
   const res = await fetch(`${API_URL}/api/channels/${slug}`, {
     cache: 'no-store',
+    headers: {
+      'Accept': 'application/json',
+    },
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Channel not found');
