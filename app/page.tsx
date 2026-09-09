@@ -1,34 +1,20 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { getChannels, Channel } from '@/lib/api';
+import { getChannels } from '@/lib/api';
 import ChannelCard from '@/components/ChannelCard';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 import { Radio } from 'lucide-react';
 
-export default function HomePage() {
-  const [channels, setChannels] = useState<Channel[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+export const revalidate = 10; // Revalidate every 10 seconds
 
-  const fetchChannels = async () => {
-    try {
-      const data = await getChannels();
-      setChannels(data);
-      setError('');
-    } catch (err) {
-      setError('Could not connect to the stream server. Make sure the local server is running.');
-    } finally {
-      setLoading(false);
-    }
-  };
+export default async function HomePage() {
+  let channels = [];
+  let error = '';
 
-  useEffect(() => {
-    fetchChannels();
-    // Mag-auto refresh bawat 10 segundo para ma-detect kung may nag-live
-    const interval = setInterval(fetchChannels, 10000);
-    return () => clearInterval(interval);
-  }, []);
+  try {
+    channels = await getChannels();
+  } catch (err) {
+    error = 'Could not connect to the stream server. Make sure the local server is running.';
+  }
 
   const liveChannels = channels.filter((c) => c.isLive);
   const offlineChannels = channels.filter((c) => !c.isLive);
@@ -44,7 +30,7 @@ export default function HomePage() {
             Live Channels
           </h1>
           <p className="text-white/40 mt-2">
-            {error || loading ? '' : `${channels.length} channel${channels.length !== 1 ? 's' : ''} · ${liveChannels.length} live`}
+            {error ? '' : `${channels.length} channel${channels.length !== 1 ? 's' : ''} · ${liveChannels.length} live`}
           </p>
         </div>
 
@@ -55,13 +41,8 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Loading state */}
-        {loading && (
-          <div className="text-white/40 text-sm py-10">Loading channels...</div>
-        )}
-
         {/* Live channels */}
-        {!loading && liveChannels.length > 0 && (
+        {liveChannels.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-5">
               <span className="live-dot w-2 h-2 rounded-full bg-live inline-block" />
@@ -78,7 +59,7 @@ export default function HomePage() {
         )}
 
         {/* Offline channels */}
-        {!loading && offlineChannels.length > 0 && (
+        {offlineChannels.length > 0 && (
           <section>
             {liveChannels.length > 0 && (
               <h2 className="text-sm font-semibold text-white/30 uppercase tracking-widest mb-5">
@@ -94,7 +75,7 @@ export default function HomePage() {
         )}
 
         {/* Empty state */}
-        {!loading && channels.length === 0 && !error && (
+        {channels.length === 0 && !error && (
           <div className="text-center py-24">
             <Radio className="w-14 h-14 text-white/10 mx-auto mb-4" />
             <h2 className="text-white/30 text-lg font-medium">No channels yet</h2>
@@ -104,6 +85,17 @@ export default function HomePage() {
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-white/5 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/25">
+          <span>© {new Date().getFullYear()} LiveStream Platform</span>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="hover:text-white/50 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white/50 transition-colors">Terms of Service</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -217,7 +217,7 @@ export default function DashboardPage() {
                           rtmp://live.swifftnet.site:1935/live
                         </code>
                         <button
-                          onClick={() => handleCopy('rtmp://localhost:1935/live')}
+                          onClick={() => handleCopy('rtmp://live.swifftnet.site:1935/live')}
                           className="p-2 rounded-lg hover:bg-white/5 text-white/40 hover:text-white/70 transition-colors"
                         >
                           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
