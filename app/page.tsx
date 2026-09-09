@@ -1,4 +1,4 @@
-import { getChannels } from '@/lib/api';
+import { getChannels, Channel } from '@/lib/api';
 import ChannelCard from '@/components/ChannelCard';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
@@ -7,7 +7,7 @@ import { Radio } from 'lucide-react';
 export const revalidate = 10; // Revalidate every 10 seconds
 
 export default async function HomePage() {
-  let channels = [];
+  let channels: Channel[] = [];
   let error = '';
 
   try {
