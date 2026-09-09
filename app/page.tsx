@@ -1,4 +1,4 @@
-import { getChannels } from '@/lib/api';
+import { getChannels, Channel } from '@/lib/api';
 import ChannelCard from '@/components/ChannelCard';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
@@ -7,13 +7,15 @@ import { Radio } from 'lucide-react';
 export const revalidate = 10; // Revalidate every 10 seconds
 
 export default async function HomePage() {
-  let channels = [];
+  let channels: Channel[] = [];
   let error = '';
 
   try {
     channels = await getChannels();
-  } catch (err) {
-    error = 'Could not connect to the stream server. Make sure the local server is running.';
+  } catch (err: any) {
+    // Ipakita ang tunay na mensahe kung bakit nag-fail ang fetch
+    error = err?.message || 'Could not connect to the stream server.';
+    console.error('Channel fetch error:', err);
   }
 
   const liveChannels = channels.filter((c) => c.isLive);
