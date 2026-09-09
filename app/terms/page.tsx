@@ -143,7 +143,7 @@ export default function TermsPage() {
                 ['Broadcast Entity', 'Academy Radio 97.5 FM'],
                 ['Station Location', 'Santa Cruz Santa Ana, Cagayan, Philippines'],
                 ['Technical & Network Support', 'Howard Kingsley Ramos'],
-                ['Official Website', 'stream.swifftnet.site'],
+                ['Official Website', 'stream.swifftnet.site/watch/advance-academy'],
               ] as [string, string][]).map(([label, value]) => (
                 <li key={label} className="flex gap-3 text-sm">
                   <span className="text-white/40 w-56 flex-shrink-0">{label}</span>

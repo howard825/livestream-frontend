@@ -137,7 +137,7 @@ export default function PrivacyPage() {
                 ['Developer Support', 'Swifftnet Network & Development Team'],
                 ['Email', 'ramoshowardkingsley58@gmail.com'],
                 ['Station Location', 'Santa Cruz, Santa Ana, Cagayan, Philippines'],
-                ['Website', 'stream.swifftnet.site'],
+                ['Website', 'stream.swifftnet.site/watch/advance-academy'],
               ] as [string, string][]).map(([label, value]) => (
                 <li key={label} className="flex gap-3 text-sm">
                   <span className="text-white/40 w-44 flex-shrink-0">{label}</span>
